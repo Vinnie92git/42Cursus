@@ -1,0 +1,4 @@
+Hola, esto
+es una prueba 
+para open/read de
+get_next_line
