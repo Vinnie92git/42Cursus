@@ -6,7 +6,7 @@
 /*   By: vinni <vinni@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 14:45:33 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/14 12:02:26 by vinni            ###   ########.fr       */
+/*   Updated: 2023/02/14 12:41:31 by vinni            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,25 @@ char    *ft_next_line(char *str)
     int     i;
     int     j;
 
-    
+    i = 0;
+    while (str[i] && str[i] != '\n')
+        i++;
+    if (!str[i])
+    {
+        free(str);
+        return (NULL);
+    }
+    next_line = malloc((ft_strlen(str) - i + 1) * sizeof(char));
+    i++;
+    j = 0;
+    while (str[i])
+    {
+        next_line[j] = str[i];
+        j++;
+        i++;
+    }
+    free(str);
+    return (next_line);
 }
 
 char    *ft_find_line(char *str)
