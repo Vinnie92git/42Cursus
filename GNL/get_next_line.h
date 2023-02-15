@@ -6,7 +6,7 @@
 /*   By: vinni <vinni@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 11:27:11 by vinni             #+#    #+#             */
-/*   Updated: 2023/02/15 11:37:29 by vinni            ###   ########.fr       */
+/*   Updated: 2023/02/15 18:19:06 by vinni            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 # include <unistd.h>
 
 char	*get_next_line(int fd);
-void	*ft_calloc(size_t count, size_t size);
-void	ft_bzero(void *s, size_t n);
-char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_read_and_save(int fd, char *saved);
+char	*ft_find_line(char *saved);
+char	*ft_next_line(char *saved);
+char	*ft_strjoin(char *s1, char *s2);
 size_t	ft_strlen(const char *s);
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
+char	*ft_strcpy(char *dst, char *src);
+char	*ft_strcat(char *dst, char *src);
 char	*ft_strchr(const char *s, int c);
 
 #endif
