@@ -6,9 +6,11 @@
 /*   By: vinni <vinni@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 14:45:33 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/14 12:41:31 by vinni            ###   ########.fr       */
+/*   Updated: 2023/02/15 11:39:37 by vinni            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "get_next_line.h"
 
 char    *ft_next_line(char *str)
 {
@@ -47,7 +49,7 @@ char    *ft_find_line(char *str)
         return (NULL);
     while (str[i] && str[i] != '\n')
         i++;
-    line = malloc(sizeof(char) * i + 1)
+    line = malloc(sizeof(char) * i + 2)
     i = 0;
     while (str[i] && str[i] != '\n')
     {
