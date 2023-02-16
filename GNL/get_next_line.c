@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vinni <vinni@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vipalaci <vipalaci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/06 14:45:33 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/15 17:42:39 by vinni            ###   ########.fr       */
+/*   Created: 2023/02/15 13:57:46 by vipalaci          #+#    #+#             */
+/*   Updated: 2023/02/16 12:27:06 by vipalaci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ char	*ft_next_line(char *saved)
 	}
 	next_line = (char *)malloc((ft_strlen(saved) - i + 1) * sizeof(char));
 	if (!next_line)
+	{
+		free(next_line);
 		return (NULL);
+	}
 	i++;
 	j = 0;
 	while (saved[i])
@@ -73,7 +76,7 @@ char	*ft_read_and_save(int fd, char *saved)
 
 	read_bytes = 1;
 	buff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if(!buff)
+	if (!buff)
 		return (NULL);
 	read_bytes = 1;
 	while (!ft_strchr(saved, '\n') && read_bytes != 0)
@@ -90,7 +93,6 @@ char	*ft_read_and_save(int fd, char *saved)
 	free(buff);
 	return (saved);
 }
-
 
 char	*get_next_line(int fd)
 {
