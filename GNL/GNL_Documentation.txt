@@ -1,0 +1,187 @@
+Get Next Line
+
+<aparte>
+📃 *Lo que necesitaba aprender para construir el proyecto get_next_line. ¡Consejos, explicaciones, diagramas y código, compartiendo con el deseo de ayudar a otros cadetes a abordar el proyecto más rápido! ¡Siéntete libre de comentar y contribuir!*
+
+</aparte>
+
+> **palabras clave: variable estática, descriptor de archivo (fd), lectura de archivo**
+>
+
+<aparte>
+⚠️ Sabemos que no todos tienen el privilegio de poder dedicar el 100% de su tiempo íntegramente a 42. Estas guías fueron creadas con el objetivo de agilizar el proceso de averiguar qué conocimientos se necesitan para poder resolver el problema propuesto por el proyecto, ahorrando dinero Tiempo valioso para codificar. He evitado dar soluciones listas para usar en la medida de lo posible, porque diseñar, implementar, probar y construir la solución también es parte de su aprendizaje en 42. Aun así, esta página puede contener algunos spoilers de implementación, ¡así que proceda con precaución!
+
+</aparte>
+
+# Para entender antes de empezar
+
+En primer lugar, intente buscar en Google cómo leer un archivo en C. ¿Qué funciones uso? ¿Cómo se entiende un archivo dentro de un programa en C? ¿Qué representa el archivo, es una variable, un puntero, un número, un objeto (estructura)? ¿Qué puedo hacer con un archivo usando el lenguaje C? Experimente, intente abrir un archivo en main, luego cambie la dirección del archivo (cree una carpeta y póngala dentro), vea cómo se comporta el programa...
+
+Estoy descubriendo que para leer un archivo, primero necesito abrirlo, y para abrir un archivo hay dos funciones (`open()` o `fopen()`); para leer el archivo hay dos funciones (`read()` o `fgetc()`), con diferentes argumentos y demás. Trate de encontrar ejemplos de códigos que abran y lean un archivo (independientemente de las funciones) y trate de entender lo que está sucediendo primero. Luego comienza a dirigir su búsqueda más hacia la función `read()` en sí misma, que es la función que pdf le permite usar. A partir de ahí, aquí tienes la lista de temas que te pueden ayudar a entender mejor el problema:
+
+### función read()
+
+Además de leer el manual, toma la función e intenta leer algo, un archivo, entrada de terminal, dale una buena jugada para saber cómo funciona. ¿Qué sucede cuando la función llega al final del archivo? ¿Qué pasa si el búfer es mucho más grande que la cantidad de caracteres en el archivo? ¿Qué pasa si el búfer es 1? ¿Qué pasa si el archivo está vacío? ¿Qué sucede si el archivo no existe (fd aleatorio)?
+
+Realice varias pruebas con la función de lectura leyendo el mismo archivo, cambiando el tamaño del búfer y observando el retorno de la función y la cadena que leyó.
+
+### File Descriptor
+
+Es un número que identifica un archivo al ejecutar un programa. ¿Cuál es el valor máximo de un archivo descriptor? ¿Es esto lo mismo que el número máximo de archivos que se pueden abrir en un programa a la vez?
+
+### Qué es una macro y cómo definirla en tiempo de compilación
+
+Las macros son fragmentos de código que reciben un nombre, y a partir de ahí se pueden replicar (expandir) en otras partes de un archivo de código fuente (`*.c`), para comodidad de quienes escriben el código. Expandir una macro es lo mismo que hacer `ctrl+C`, `ctrl+V` de un fragmento de código de un lugar a otro, pero el preprocesador hace este trabajo al compilar el código que escribiste.
+
+Puede parecer un concepto nuevo y extraño, ¡pero has estado usando este concepto durante mucho tiempo! El `#include <algumalib.h>` que usamos desde basecamp es como una macro, de hecho, un gran ejemplo de "copiar código de otro lugar": la biblioteca que desea importar con el include (por ejemplo, `# include < stdio.h>`) está guardado en algún lugar de su computadora, probablemente fue escrito por otra persona (o usted mismo, en el caso de `#include "libft.h"`), y lo que hace esta línea de código es copiar en su archivo de código fuente (por ejemplo, `main.c`) el contenido del encabezado (`stdio.h`, que por regla general contiene prototipos, a veces funciones completas).
+
+Hablando formalmente, tanto la inclusión de encabezados a través de `#include` como la definición de macros a través de `#define` son **directrices de preprocesamiento**, que es el paso intermedio que ocurre entre escribir el código fuente y compilar el código y convertirlo en binario. o biblioteca estática. Este artículo explica más al respecto:
+
+[](https://www.programiz.com/c-programming/c-preprocessor-macros)
+
+Una macro puede definir varias líneas de código, ya que solo puede definir un valor fijo. Norma habla de macros y para este proyecto es importante que sepas lo que puedes y no puedes hacer usando macros.
+
+Dado que las macros son directivas de preprocesamiento (lo que sucede antes de la compilación), puede crear macros cuando escribe su código (usando https://www.rapidtables.com/code/linux/gcc/gcc-d.html](https://www.rapidtables.com/code/linux/gcc/gcc-d.html) (use esta bandera para establecer el BUFFER_SIZE)
+
+### Variable estática
+
+Comprender el concepto de una variable estática es importante y también es importante comprender cómo implementarla. Nada fuera de este mundo: inicializas la variable en el mismo momento aquel en que lo declaras. Esto es contrario a la intuición porque hasta ahora, el estándar nos ha dicho explícitamente que no inicialicemos las variables en el momento de la declaración. Pero el propio estándar hace esta excepción para las variables estáticas. Como la variable estática se declara al comienzo de la función, no tiene que preocuparse por liberar su memoria, esto sucede automáticamente durante la ejecución. Está bien, puedes continuar.
+
+### Asignación de memoria: pila vs. montón
+
+De alguna manera logré sobrevivir a basecamp y [Accelera — Libft](https://www.notion.so/Acelera-Libft-8874a01f188a4671ae503fe9e99056ab) hasta ahora sin tener CLARO una de las cosas que es fundamental en el lenguaje C y que lo diferencia de otros idiomas (además de punteros). Ese es el hecho de que la *manera* en que se asigna la memoria durante la ejecución de su programa es relevante, **Y TAMBIÉN** es responsabilidad de quien escribe el programa. Las funciones `malloc()`/`calloc()` y `free()` dejan en manos del programador la tarea de utilizar la memoria RAM del SO que ejecutará el programa. Y esto es relevante a la hora de pensar cómo voy a resolver el problema planteado en LNG: ¿qué tipo de variables tengo en juego? ¿Alguna cadena tiene una longitud fija, es decir, puedo predecir que la longitud de cualquiera de las variables siempre será fija? ¿Alguno tiene tamaños variables? ¿Cómo satisfago las necesidades de flexibilidad del retorno de la función get_next_line? (que solo puede devolver una palabra, ¿cómo puede devolver una línea de 10,000 palabras?) ¿Cómo satisfago la necesidad de la función de lectura de tener un búfer para recibir el contenido que se leyó?
+
+El video que finalmente me ayudó a comprender mejor qué es stack/heap fue [this CS50 class](https://www.youtube.com/watch?v=NKTfNv2T0FE), más específicamente en la marca de 1:48:00 (pero recomiendo ver toda la clase que es 🤯🤯🤯).
+
+## Configurando tu prueba
+
+get_next_line() es una función intermedia, en el sentido de que Moulinette generará tanto un archivo para leer como un main para llamar a get_next_line(), pero no es la función misma la que ***abre*** el archivo que será leer (¡la función `abrir` no está permitida!) Simplemente ***lee*** un archivo que ***ya está abierto***.
+
+GNL llamará a la función `read()` (pasando el descriptor de archivo que le pasó main), y luego procesará el resultado que recibe de read. Por lo tanto, para probar mínimamente su función, necesitará:
+
+- Cualquier archivo de texto (ni siquiera necesita tener un `\n` dentro) para ser leído;
+- Un main que abre este archivo, hace lo que tiene que hacer (llama a gnl), posiblemente imprime el resultado de cada llamada a gnl, y luego cierra el archivo y finaliza la ejecución;
+
+Esto debería ser suficiente para "poner de pie" su función de GNL mientras la construye.
+
+Cuando se sienta listo para realizar pruebas más exhaustivas de su función, use los repositorios de pruebas automatizados [**desde este enlace**](https://docs.google.com/spreadsheets/d/1Ewfq-R65Ymko8qteJmLQJcv46l1OeaD-m8QBJ4s8TEs/ edit# gid=0).
+
+---
+
+# Explicación del proyecto
+
+Desde el prototipo de la función `get_next_line()`, puede ver cuáles son la entrada y la salida de la función.
+
+La entrada es un descriptor de archivo (fd), es decir, puede ser un archivo que se abrió en main, como stdin (entrada estándar: envío de datos a través de la terminal), o por redirección (stdout). Cualquier cosa que se pueda abrir e interpretar como un archivo con un archivo descrito puede ser el argumento de entrada de la función.
+
+La salida de la función es una línea, es decir, una cadena de caracteres que termina en `\n` y que contiene solo un `\n`, excepto en los casos en que el archivo que se lee no contiene ningún `\ n`, o no terminar con `\n`; en estos casos, la línea devuelta no necesita terminar en `\n`.
+
+Solo puede usar la función de lectura, que lee el archivo en partes y no analiza el contenido de lo que se leyó. Así que es su trabajo en este proyecto implementar la lógica para verificar si hay un `\n` dentro de lo que se leyó por lectura, y luego ensamblar la línea de retorno de su función get_next_line.
+
+Entonces, si debe interrumpir el proceso de lectura cada vez que encuentre un `\n`, y este `\n` puede estar en cualquier posición dentro de su búfer de lectura, entonces necesitará usar una variable estática para almacenar todos los caracteres que vienen. después de `\n`, para que la información no se pierda una vez que la función `get_next_line()` llegue al final y devuelva la línea. De modo que, en la siguiente ejecución, la siguiente línea comience con los caracteres restantes de la ejecución anterior.
+
+## ¿Vamos a ver un ejemplo práctico?
+
+Suponga que lee un archivo que contiene la cadena `"¡Hola mundo!\nBlz?\n"` (16 bytes), como se muestra en la siguiente figura:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9440acf2-c623-4e64-aee8-2d3bb317a899/Untitled.png)
+
+Tenga en cuenta que el contenido del archivo contiene dos caracteres de nueva línea (`\n`). Significa que al leer este archivo por completo, su función GNL debería ejecutarse dos veces, devolviendo una línea a la vez.
+
+La función `read()` maneja la lectura de solo caracteres BUFFER_SIZE a la vez. Supongamos que BUFFER_SIZE se estableció en 4 en el momento de la compilación, es decir, al ejecutar el comando gcc, se agregó el indicador `-D BUFFER_SIZE=4`, representado en la siguiente figura por el **cuadro morado**:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3df8d9e1-2155-4914-957f-3e09fd3cf936/Sin título.png)
+
+Su función es evaluar si hay un carácter `\n` dentro de lo leído o no. Si es así, entonces sabe que GNL debería devolver todo lo leído hasta este carácter. De lo contrario, la lectura debería continuar, llamando a `read()` nuevamente. En nuestro ejemplo, **no hay** un `\n` dentro del búfer. Por lo tanto, la lectura continúa y la función GNL no debe cerrarse todavía, pero antes de iniciar la siguiente lectura `read()`, es necesario guardar todo lo que se ha leído hasta el momento para construir la línea que se devolverá como el `\n` se encuentra, ¿verdad? ¡Esto es contigo!
+
+La siguiente lectura de `read()` devolverá el siguiente bloque de caracteres:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c92d898e-374f-4211-b745-cbe189fd836a/Untitled.png)
+
+Del mismo modo, aún no hemos encontrado un `\n` dentro del bloque que se leyó. Concatenamos todo este bloque de caracteres con los otros caracteres que se leyeron y llamamos a `read()` nuevamente.
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/99a4854b-2b8c-4268-928e-d3a54d91557e/Untitled.png)
+
+¡Ups! ¡Esta vez tenemos un `\n` dentro del bloque! No solo eso, sino que hay un carácter justo después del carácter de nueva línea. Tenga en cuenta que cuando encuentra un `\n` en el búfer `read()`, esta es la señal para que su función GNL se detenga y devuelva la línea que se leyó. Pero, ¿qué pasará con esa `B` que existe después de `\n`? Necesito guardarlo porque es el comienzo de la siguiente línea, pero mi función GNL está a punto de salir...
+
+Espero que a estas alturas ya hayas recopilado toda la información que necesitas para solucionar este problema ;) Si es necesario, revisa los conceptos de arriba, escribe borradores, pide ayuda, en fin, haz lo que sea necesario para proceder.
+
+Vale la pena señalar que incluso cuando se cierra la función GNL, el archivo permanece abierto y, por lo tanto, la función `read ()` permanece en el mismo punto donde se detuvo en la última lectura del archivo. Lo que significa que la próxima vez que se llame, leerá los siguientes 4 caracteres, como se muestra en la siguiente figura:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/83317e7a-63e0-4f74-8a7b-5f613f2261ae/Untitled.png)
+
+Finalmente, cuando no hay más caracteres para leer, la función `read()` devuelve `0`, que es una señal para que la función GNL devuelva `NULL`, lo que indica que no hay nada más para leer del archivo. . No olvide liberar cualquier variable que haya sido asignada con `malloc` antes de finalizar la función, para evitar pérdidas de memoria.
+
+## Otro ejemplo (sin salto de línea)
+
+Un ejemplo más, esta vez un archivo sin saltos de línea y `BUFFER_SIZE = 5`. El contenido del archivo es: `"¡La respuesta es 42!"` (16 bytes).
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bdc8389b-06f3-4041-a033-0e41cb45d531/Untitled.png)
+
+La primera lectura de `read()` será la siguiente:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9d21f46a-5f5a-4571-8d93-6907e1b26667/Untitled.png)
+
+En los primeros 5 bytes leídos, no se encontraron nuevas líneas. Debe almacenar el contenido de este búfer para devolver la línea al final de la función. La lectura continúa:
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/37f1cf5c-d974-42c2-aa63-481d8b6ed496/Untitled.png)
+
+Una vez más, el resultado de la lectura no contiene saltos de línea. Por lo tanto, debe concatenar completamente este búfer a la línea que se devolverá al final de la función. Y llama a `read()` de nuevo.
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fa647bb0-f907-476e-91ee-46802756119e/Untitled.png)
+
+Por tercera vez, no hay saltos de línea en el contenido leído. Significa que aún no se ha encontrado el final de la línea. Guarde el contenido del búfer y vuelva a llamar a la función `read()`.
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2279c1b1-4d5c-40a8-9719-5ba6868f23ca/Untitled.png)
+
+Tenga en cuenta que esta vez se leyeron menos de 5 bytes del archivo. La función `read()` devuelve el número de caracteres leídos del archivo, en este caso, el retorno será igual a `1`. Esto indica que se ha llegado al final del archivo (¿ve por qué?) Por lo tanto, una última vez es necesario verificar si hay un salto de línea dentro del contenido que se acaba de leer. Si es así, debe terminar su línea, guardar lo que queda del búfer después del carácter `\n` (si corresponde), dar `free()` donde lo necesite y finalizar `get_next_line()` devolviendo el línea encontrada.
+
+En nuestro caso, incluso al final del archivo, ¡no encontramos un salto de línea! El pdf dice que en este caso n No es necesario "forzar" un `\n` al final de la línea. Por lo tanto, simplemente concatene todo lo que se leyó en su línea y devuélvalo como retorno al final de la ejecución.
+
+¡Buena suerte! 🍀
+
+---
+
+# Paso a paso para construir el GNL
+
+- [ ] Lea los caracteres `BUFFER_SIZE` usando `read()` tantas veces como sea necesario
+- [ ] Encuentra el caracter `\n`
+- [ ] Devuelve el texto leído antes de `\n`
+- [ ] Guarda el texto leído después de `\n`, si lo hay
+- [ ] Usar el texto guardado en la llamada anterior de GNL
+- [ ] ¿Cómo lidiar con cadenas más grandes que `BUFFER_SIZE`?
+- [ ] ¿En qué casos mi GNL debería devolver -1?
+
+Para llegar más lejos:
+
+- [ ] (bonificación) ¿Qué estructura de datos debo usar para manejar múltiples FD?
+- [ ] ¿Cómo debo tratar con el carácter `NULL`?
+- [ ] ¿Debo usar malloc en mi búfer (función de lectura) o usar una matriz de tamaño fijo?
+
+Desde su libft, eche un vistazo a las siguientes funciones: `strchr`, `strdup`, `strjoin`, `strdel`.
+
+*(adaptado [**de este hilo**](https://discord.com/channels/@me/895737928469340160/895737932240023622) en slack de 42 Mundial)*
+
+---
+
+# Diagrama en Miro y mi Github
+
+Hice un [diagrama en Miro](https://miro.com/app/board/o9J_l8sFQdU=/) que me ayudó a comprender mejor el flujo de las cosas, los posibles escenarios, etc., pero al final, mi código se desvió un mucho por la forma en que se hizo el diseño. Aquí te dejo el dibujo, tal vez te pueda ayudar. Cuando nada más, aquí hay un consejo para hacer su propio diagrama para desarrollar y perfeccionar su razonamiento, hasta que se sienta cómodo para comenzar a codificar.
+
+![get_next_line - Diagrama inicial (1).jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2d9fe18b-0e21-4382-aebd-da65d6d7019b/get_next_line_-_Initial_Diagram_ (1).jpg)
+
+Y también dejo el enlace a mi Github, escribí un hermoso README.me para explicar exactamente cómo funciona el proyecto y cómo ejecutar el programa para probarlo (aquí está el consejo si quieres un main.c simple listo para hacer tus pruebas ), siga o [**Github link**](https://github.com/rodsmade/Get_Next_Line-42sp).
+
+![Sin título](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f4de9c62-66a8-4631-9b00-667e727384f4/Untitled.png)
+
+---
+
+# Contacto y Otros Proyectos
+
+En Github puedes encontrar mis otros 42 proyectos **[en este enlace](https://github.com/rodsmade/Projets_42_SP/)**.
+
+Para otros proyectos (que ya hice 😅), consulta la página [¡Acelera 42cursus!](https://www.notion.so/Acelera-42cursus-400c86d2e61242338b010c23c6930134)
+
+Si no tiene nada que necesite allí, búsquelo en [Notion dos Notions - Projetos da 42](https://www.notion.so/Notion-dos-Notions-Projetos-da-42-4e9bc573b5e84b10b91054510d6b4797).
+
+Puedes encontrarme en Discord aquí: **[Rods#3435](https://discordapp.com/users/rods#3435)**.
