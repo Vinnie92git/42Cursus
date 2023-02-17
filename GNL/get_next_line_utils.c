@@ -6,7 +6,7 @@
 /*   By: vipalaci <vipalaci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 13:57:43 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/16 11:57:18 by vipalaci         ###   ########.fr       */
+/*   Updated: 2023/02/17 12:32:25 by vipalaci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*ft_strchr(char *s, int c)
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == (char) c)
+		if (s[i] == (char)c)
 			return (&s[i]);
 		i++;
 	}

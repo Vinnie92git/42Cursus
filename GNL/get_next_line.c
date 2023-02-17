@@ -6,7 +6,7 @@
 /*   By: vipalaci <vipalaci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 13:57:46 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/16 12:27:06 by vipalaci         ###   ########.fr       */
+/*   Updated: 2023/02/17 12:19:49 by vipalaci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ char	*ft_read_and_save(int fd, char *saved)
 		read_bytes = read(fd, buff, BUFFER_SIZE);
 		if (read_bytes == -1)
 		{
+			free(saved);
 			free(buff);
 			return (NULL);
 		}

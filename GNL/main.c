@@ -6,7 +6,7 @@
 /*   By: vipalaci <vipalaci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 10:44:26 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/16 11:41:10 by vipalaci         ###   ########.fr       */
+/*   Updated: 2023/02/17 11:00:16 by vipalaci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(void)
 	int		fd;
 	char	*line;
 
-	fd = open("test", O_RDONLY);
+	fd = open("read_error.txt", O_RDONLY);
 	while (1)
 	{
 		line = get_next_line(fd);
@@ -28,5 +28,6 @@ int	main(void)
 		printf("%s", line);
 		free(line);
 	}
+	system ("leaks a.out");
 	return (0);
 }
