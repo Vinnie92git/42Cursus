@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vinni <vinni@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/06 14:45:33 by vipalaci          #+#    #+#             */
-/*   Updated: 2023/02/21 11:44:09 by vinni            ###   ########.fr       */
+/*   Created: 2023/02/22 16:45:40 by vinni             #+#    #+#             */
+/*   Updated: 2023/02/22 16:45:50 by vinni            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_next_line(char *saved)
 {
@@ -84,8 +84,8 @@ char	*ft_read_and_save(int fd, char *saved)
 		read_bytes = read(fd, buff, BUFFER_SIZE);
 		if (read_bytes == -1)
 		{
-			free(saved);
 			free(buff);
+			free(saved);
 			return (NULL);
 		}
 		buff[read_bytes] = '\0';
@@ -97,15 +97,15 @@ char	*ft_read_and_save(int fd, char *saved)
 
 char	*get_next_line(int fd)
 {
-	static char	*saved;
+	static char	*saved[1024];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	saved = ft_read_and_save(fd, saved);
-	if (!saved)
+	saved[fd] = ft_read_and_save(fd, saved[fd]);
+	if (!saved[fd])
 		return (NULL);
-	line = ft_find_line(saved);
-	saved = ft_next_line(saved);
+	line = ft_find_line(saved[fd]);
+	saved[fd] = ft_next_line(saved[fd]);
 	return (line);
 }
