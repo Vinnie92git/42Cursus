@@ -74,7 +74,6 @@ char	*ft_read_and_save(int fd, char *saved)
 	char	*buff;
 	int		read_bytes;
 
-	read_bytes = 1;
 	buff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!buff)
 		return (NULL);
